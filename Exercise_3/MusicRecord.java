@@ -1,3 +1,9 @@
+/**
+ * @author Justin Leong
+ * @version 1.0
+ * @since November 1, 2020
+ */
+
 import java.io.Serializable;
 
 /**

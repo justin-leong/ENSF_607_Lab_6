@@ -1,4 +1,8 @@
-
+/**
+ * @author Justin Leong
+ * @version 1.0
+ * @since November 1, 2020
+ */
 
 import java.io.EOFException;
 import java.io.FileInputStream;
@@ -12,7 +16,6 @@ public class ReadRecord {
     /**
      *  opens an ObjectInputStream using a FileInputStream
      */
-    
     private void readObjectsFromFile(String name)
     {
         MusicRecord record ;
@@ -53,7 +56,10 @@ public class ReadRecord {
 
     }           // END OF METHOD 
     
-    
+    /**
+     * Runs program to read serialized binary file
+     * @param args
+     */
     public static void main(String [] args)
     {
         ReadRecord d = new ReadRecord();
