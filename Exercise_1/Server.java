@@ -5,13 +5,41 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+/**
+ * This class represents a server that waits for a request from a client to check whether a string is a 
+ * palindrome or not. This server class communicates on port 8099 with a Java socket.
+ * 
+ * @author Justin Leong
+ * @version 1.0
+ * @since November 1, 2020
+ * 
+ */
 public class Server {
 	
+	/**
+	 * The palindrome socket to communicate with client
+	 */
 	private Socket palinSocket;
+	
+	/**
+	 * The server socket used to communicate with client
+	 */
 	private ServerSocket serverSocket;
+	
+	/**
+	 * Output connection of socket
+	 */
 	private PrintWriter socketOut;
+	
+	/**
+	 * Input connection of socket
+	 */
 	private BufferedReader socketIn;
 	
+	/**
+	 * Constructs the server by initializing the server socket at the specified port
+	 * @param portNumber the port for the server socket to connect to
+	 */
 	public Server(int portNumber) {
 		try {
 			serverSocket = new ServerSocket(portNumber);
@@ -20,22 +48,29 @@ public class Server {
 		}
 	}
 	
+	/**
+	 * Reads client requests from the input connection of the socket and performs
+	 * palindrome checking
+	 */
 	public void communicate() {
-		String line = null;
+		String word = null;
 		
 		while(true) {
 			try {
-				line = socketIn.readLine();
-
-				if(line == null) {
+				// reads input from socket
+				word = socketIn.readLine();
+				
+				// Disconnects server socket when client ends session
+				if(word == null) {
 					break;
 				}
 				
-				boolean isPalindrome = palindrome(line);
+				// performs palindrome checking and sends output to client
+				boolean isPalindrome = palindrome(word);
 				if(isPalindrome) {
-					socketOut.println(line + " is a Palindrome.");
+					socketOut.println(word + " is a Palindrome.");
 				} else {
-					socketOut.println(line + " is not a Palindrome.");
+					socketOut.println(word + " is not a Palindrome.");
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -43,14 +78,18 @@ public class Server {
 		}
 	}
 	
-	// function to check if a string is a palindrome
-	public boolean palindrome(String line) {
-		// number of characters in string
-		int n = line.length();
+	/**
+	 * Checks if the input string is a palindrome or not
+	 * @param word the string to check if palindrome or not
+	 * @return true if the word is a palindrome, otherwise false
+	 */
+	public boolean palindrome(String word) {
+		// number of characters in word
+		int n = word.length();
 		
 		// compare character pairs to check whether string is a palindrome
 		for(int i = 0; i < n/2; i++) {
-			if(line.charAt(i) != line.charAt(n-1-i)) {
+			if(word.charAt(i) != word.charAt(n-1-i)) {
 				return false;
 			}
 		}
@@ -59,19 +98,24 @@ public class Server {
 	}
 	
 	public static void main(String[] args) throws IOException {
+		// instantiating a Server object with port 8099
 		Server myServer = new Server(8099);
 		System.out.println("Server is now running...");
 		
 		// Establishing a connection
 		try {
+			// waiting for client connection
 			myServer.palinSocket = myServer.serverSocket.accept();
 			System.out.println("Connection accepted by the server!");
 			
+			// opens connections to socket
 			myServer.socketIn = new BufferedReader(new InputStreamReader(myServer.palinSocket.getInputStream()));
 			myServer.socketOut = new PrintWriter(myServer.palinSocket.getOutputStream(), true);
 			
+			// communicates with client and performs palindrome checking task
 			myServer.communicate();
 			
+			// closes connections to socket
 			myServer.socketIn.close();
 			myServer.socketOut.close();
 			System.out.println("Ending Connection... Good Bye!");
