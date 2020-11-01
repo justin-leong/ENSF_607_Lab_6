@@ -92,7 +92,7 @@ public class WriteRecord {
             
 			// write record object to objectOut
 			try {
-				objectOut.writeObject(record);
+				objectOut.writeObject(new MusicRecord(year, songName, singerName, price));
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (NoSuchElementException e) {
