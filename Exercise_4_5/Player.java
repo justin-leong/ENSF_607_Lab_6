@@ -62,7 +62,7 @@ public class Player {
 			makeMove();
 			
 			// display board after player makes move
-			board.display();
+			//board.display();
 			
 			// checks if there is a winner
 			if(board.xWins() || board.oWins() || board.isFull()) {
@@ -75,23 +75,23 @@ public class Player {
 			opponent.makeMove();
 			
 			// display board after opponent makes move
-			board.display();
+			//board.display();
 		}
 		
 		// announces that the game is over and displays name of the winner/tie
-		System.out.print("THE GAME IS OVER: ");
+		//System.out.print("THE GAME IS OVER: ");
 		
 		
 		if(board.xWins()) {
-			System.out.println(name + " is the winner!");
+			//System.out.println(name + " is the winner!");
 			this.socketOut.println(name + " is the winner!");
 			opponent.socketOut.println(name + " is the winner!");
 		}else if(board.oWins()) {
-			System.out.println(opponent.getName() + " is the winner!");
+			//System.out.println(opponent.getName() + " is the winner!");
 			this.socketOut.println(opponent.getName() + " is the winner!");
 			opponent.socketOut.println(opponent.getName() + " is the winner!");
 		}else {
-			System.out.println(" it is a tie!");
+			//System.out.println(" it is a tie!");
 			this.socketOut.println("It is a tie!");
 			opponent.socketOut.println("It is a tie!");
 		}
@@ -102,14 +102,10 @@ public class Player {
 	 */
 	public void makeMove() {
 		
-		// initialize scanner object to read in row and col input from player
-		//Scanner scan = new Scanner(System.in);
-		
 		// prompts the user to select a row and col to place their marker, continues to prompt user until valid input is entered
 		boolean validSpace = false;
 		while(validSpace == false) {
 			// prompt player to enter a row number
-			//System.out.print("\n" + name + ", what row should your next X be placed in? ");
 			int row = -1;
 			while(row < 0 || row > 2) {
 				try {
@@ -118,15 +114,14 @@ public class Player {
 					
 					// checks that the number entered is within the board grid
 					if(row < 0 || row > 2) {
-						System.out.print("Please enter a valid row number (0, 1, 2): ");
+						//System.out.print("Please enter a valid row number (0, 1, 2): ");
 						this.socketOut.println("Invalid");
 					} else {
 						this.socketOut.println("Valid");
 					}
 					
 				} catch(Exception e) {
-					System.out.print("Please enter a valid row number (0, 1, 2): ");
-					//scan.next();
+					//System.out.print("Please enter a valid row number (0, 1, 2): ");
 					this.socketOut.println("Invalid");
 					row = -1;
 				}
@@ -134,24 +129,21 @@ public class Player {
 			}
 			
 			// prompt player to enter a col number
-			//System.out.print("\n" + name + ", what column should your next X be placed in? ");
 			int col = -1;
 			while(col < 0 || col > 2) {
 				try {
-					//col = scan.nextInt();
 					col = Integer.parseInt(this.socketIn.readLine());
 					
 					// checks that the number entered is within the board grid
 					if(col < 0 || col > 2) {
-						System.out.print("Please enter a valid col number (0, 1, 2): ");
+						//System.out.print("Please enter a valid col number (0, 1, 2): ");
 						this.socketOut.println("Invalid");
 					} else {
 						this.socketOut.println("Valid");
 					}
 					
 				} catch(Exception e) {
-					System.out.print("Please enter a valid col number (0, 1, 2): ");
-					//scan.next();
+					//System.out.print("Please enter a valid col number (0, 1, 2): ");
 					this.socketOut.println("Invalid");
 					col = -1;
 				}
@@ -160,7 +152,7 @@ public class Player {
 			
 			// adds a marker to the space if empty
 			if(board.getMark(row, col) != ' ') {
-				System.out.println("Space is already taken. Please enter a row and col of an empty space!");
+				//System.out.println("Space is already taken. Please enter a row and col of an empty space!");
 				this.socketOut.println("Invalid");
 			}else {
 				board.addMark(row, col, mark);
@@ -222,19 +214,4 @@ public class Player {
 		this.mark = mark;
 	}
 	
-	/*
-	@Override
-	public void run() {
-		try {
-			name = socketIn.readLine();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		if(opponent == null || opponent.getName().equals("")) {
-			socketOut.println("Message: Waiting for opponent to connect");
-		}else {
-			socketOut.println("Game Started!");
-		}
-	}*/
 }
