@@ -39,10 +39,18 @@ public class Referee {
 		xPlayer.setOpponent(oPlayer);
 		oPlayer.setOpponent(xPlayer);
 		
-		System.out.println("\nReferee started the game...\n");
-		board.display();
+		while(xPlayer.getName().equals("") || oPlayer.getName().equals("")) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 		
-		xPlayer.play();
+		System.out.println("\nReferee started the game...\n");
+		//board.display();
+		
+		//xPlayer.play();
 	}
 	
 	/**

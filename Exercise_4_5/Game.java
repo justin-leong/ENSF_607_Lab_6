@@ -23,22 +23,25 @@ public class Game implements Constants, Runnable {
 	 */
 	private Referee theRef;
 	
+	private Player xPlayer;
+	private Player oPlayer;
+	
+	private BufferedReader pXSocketIn;
+	private PrintWriter pXSocketOut;
+	private BufferedReader pOSocketIn;
+	private PrintWriter pOSocketOut;
+	
+	
 	/**
 	 * Constructs a Game object and creates an instance of a tic-tac-toe board
 	 */
-	
-	private BufferedReader p1SocketIn;
-	private PrintWriter p1SocketOut;
-	private BufferedReader p2SocketIn;
-	private PrintWriter p2SocketOut;
-	
-    public Game(BufferedReader p1SocketIn, PrintWriter p1SocketOut, BufferedReader p2SocketIn, PrintWriter p2SocketOut) {
+    public Game() {
         theBoard  = new Board();
         
-        this.p1SocketIn = p1SocketIn;
-        this.p1SocketOut = p1SocketOut;
-        this.p2SocketIn = p2SocketIn;
-        this.p2SocketOut = p2SocketOut;
+        //this.pXSocketIn = pXSocketIn;
+        //this.pXSocketOut = pXSocketOut;
+        //this.pOSocketIn = pOSocketIn;
+        //this.pOSocketOut = pOSocketOut;
 	}
     
     /**
@@ -51,40 +54,57 @@ public class Game implements Constants, Runnable {
     	theRef.runTheGame();
     }
     
-    public void runGame() {
-    	/*
-    	Referee theRef;
-		Player xPlayer, oPlayer;
-		BufferedReader stdin;
-		Game theGame = new Game();
-		stdin = new BufferedReader(new InputStreamReader(System.in));
-		System.out.print("\nPlease enter the name of the \'X\' player: ");
-		String name= stdin.readLine();
-		while (name == null) {
-			System.out.print("Please try again: ");
-			name = stdin.readLine();
-		}
+    public void setPXSocketIn(BufferedReader pXSocketIn) {
+    	this.pXSocketIn = pXSocketIn;
+    }
+    
+    public void setPXSocketOut(PrintWriter pXSocketOut ) {
+    	this.pXSocketOut = pXSocketOut;
+    }
 
-		xPlayer = new Player(name, LETTER_X);
-		xPlayer.setBoard(theGame.theBoard);
-		
-		System.out.print("\nPlease enter the name of the \'O\' player: ");
-		name = stdin.readLine();
-		while (name == null) {
-			System.out.print("Please try again: ");
-			name = stdin.readLine();
-		}
-		
-		oPlayer = new Player(name, LETTER_O);
-		oPlayer.setBoard(theGame.theBoard);
-		
-		theRef = new Referee();
-		theRef.setBoard(theGame.theBoard);
+    public void setPOSocketIn(BufferedReader pOSocketIn) {
+    	this.pOSocketIn = pOSocketIn;
+    }
+
+    public void setPOSocketOut(PrintWriter pOSocketOut) {
+    	this.pOSocketOut = pOSocketOut;
+    }
+    
+    public void createPlayerX() {
+    	xPlayer = new Player("", LETTER_X, pXSocketIn, pXSocketOut);
+    	Thread t = new Thread(xPlayer);
+    	
+    	t.start();
+    }
+    
+    public void createPlayerO() {
+    	oPlayer = new Player("", LETTER_O, pOSocketIn, pOSocketOut);
+    	Thread t = new Thread(oPlayer);
+    	
+    	t.start();
+    }
+    
+    public void runGame() {
+    	Referee theRef;
+    	System.out.println("Testing");
+    	theRef = new Referee();
+		theRef.setBoard(theBoard);
 		theRef.setoPlayer(oPlayer);
 		theRef.setxPlayer(xPlayer);
+		
+        try {
+			appointReferee(theRef);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
         
-        theGame.appointReferee(theRef);
-        */
+		
+		/*
+		System.out.println("Game Started!!!");
+		System.out.println("Player X Name: " + xPlayer.getName());
+		System.out.println("Player O Name: " + oPlayer.getName());
+		*/
+
     }
     
     @Override

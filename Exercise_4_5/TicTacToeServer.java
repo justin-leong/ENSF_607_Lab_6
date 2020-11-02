@@ -21,6 +21,7 @@ public class TicTacToeServer {
 	public TicTacToeServer() {
 		try {
 			serverSocket = new ServerSocket(7777);
+			System.out.println("Server is running...");
 			pool = Executors.newFixedThreadPool(10);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -30,15 +31,24 @@ public class TicTacToeServer {
 	public void runServer() {
 		try {
 			while(true) {
+				Game game = new Game();
+				
 				p1Socket = serverSocket.accept();
 				p1SocketIn = new BufferedReader(new InputStreamReader(p1Socket.getInputStream()));
 				p1SocketOut = new PrintWriter(p1Socket.getOutputStream(), true);
+				System.out.println("Player 1 connection accepted");
+				game.setPXSocketIn(p1SocketIn);
+				game.setPXSocketOut(p1SocketOut);
+				game.createPlayerX();
 				
 				p2Socket = serverSocket.accept();
-				p2SocketIn = new BufferedReader(new InputStreamReader(p1Socket.getInputStream()));
-				p2SocketOut = new PrintWriter(p2Socket.getOutputStream());
+				p2SocketIn = new BufferedReader(new InputStreamReader(p2Socket.getInputStream()));
+				p2SocketOut = new PrintWriter(p2Socket.getOutputStream(), true);
+				System.out.println("Player 2 connection accepted");
+				game.setPOSocketIn(p2SocketIn);
+				game.setPOSocketOut(p2SocketOut);
+				game.createPlayerO();
 				
-				Game game = new Game(p1SocketIn, p1SocketOut, p2SocketIn, p2SocketOut);
 				pool.execute(game);
 			}
 			

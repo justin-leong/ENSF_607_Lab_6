@@ -1,3 +1,6 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Scanner;
 
 /**
@@ -10,7 +13,7 @@ import java.util.Scanner;
  * @since October 1, 2020
  *
  */
-public class Player {
+public class Player implements Runnable {
 	/**
 	 * The name of the player
 	 */
@@ -31,14 +34,19 @@ public class Player {
 	 */
 	private char mark;
 	
+	private BufferedReader socketIn;
+	private PrintWriter socketOut;
+	
 	/**
 	 * Constructs a player object setting the name of the player and the marker character they will be using
 	 * @param name the name of the player
 	 * @param mark the character that the player will be using for the game
 	 */
-	public Player(String name, char mark) {
+	public Player(String name, char mark, BufferedReader socketIn, PrintWriter socketOut) {
 		setName(name);
 		setMark(mark);
+		this.socketIn = socketIn;
+		this.socketOut = socketOut;
 	}
 	
 	/**
@@ -183,5 +191,20 @@ public class Player {
 	 */
 	public void setMark(char mark) {
 		this.mark = mark;
+	}
+
+	@Override
+	public void run() {
+		try {
+			name = socketIn.readLine();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		if(opponent == null || opponent.getName().equals("")) {
+			socketOut.println("Message: Waiting for opponent to connect");
+		}else {
+			socketOut.println("Game Started!");
+		}
 	}
 }

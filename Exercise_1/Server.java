@@ -99,7 +99,7 @@ public class Server {
 	
 	public static void main(String[] args) throws IOException {
 		// instantiating a Server object with port 8099
-		TicTacToeServer myServer = new TicTacToeServer(8099);
+		Server myServer = new Server(8099);
 		System.out.println("Server is now running...");
 		
 		// Establishing a connection
