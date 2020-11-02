@@ -34,11 +34,77 @@ public class TicTacToeClient {
 		try {
 			name = stdIn.readLine();
 			socketOut.println(name);
-			response = socketIn.readLine();
-			System.out.println("Response: " + response);
+			System.out.println("Waiting for opponent to connect");
+			//response = socketIn.readLine();
+			//System.out.println("Response: " + response);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		String gameStatus = "Your Turn";
+		
+		while(gameStatus.equals("Your Turn") || gameStatus.equals("Opponents Turn")) {
+			try {
+				//System.out.println("Waiting for gameStatus");
+				gameStatus = socketIn.readLine();
+				
+				if(gameStatus.equals("Your Turn")) {
+					System.out.println("\n" + name + " it is your turn to make a move.\n");
+					String playerMove = "Invalid";
+					
+					while(playerMove.equals("Invalid")) {
+						String rowValid = "Invalid";
+						String colValid = "Invalid";
+						String row = "";
+						String col = "";
+						
+						while(rowValid.equals("Invalid")) {
+							System.out.println(name + " what row should your next mark be placed in?");
+							row = stdIn.readLine();
+							socketOut.println(row);
+							rowValid = socketIn.readLine();
+						}
+						
+						while(colValid.equals("Invalid")) {
+							System.out.println(name + " what column should your next mark be placed in?");
+							col = stdIn.readLine();
+							socketOut.println(col);
+							colValid = socketIn.readLine();
+						}
+						
+						playerMove = socketIn.readLine();
+					}
+					
+					
+					//System.out.println("Row: " + row);
+					//System.out.println("Col: " + col);
+					
+					
+					
+				} else if(gameStatus.equals("Opponents Turn")) {
+					System.out.println("Waiting for opponent to make move");
+					String opponentsMove = socketIn.readLine();
+					
+					System.out.println("Opponent's Move: " + opponentsMove);
+					//System.out.println("Row: " + opponentRow);
+					//System.out.println("Col: " + opponentCol);
+				} else {
+					break;
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		System.out.println(gameStatus);
+		
+		try {
+			socketIn.close();
+			socketOut.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public static void main(String[] args) {

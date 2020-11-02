@@ -44,6 +44,15 @@ public class Game implements Constants, Runnable {
         //this.pOSocketOut = pOSocketOut;
 	}
     
+    public Game(BufferedReader pXSocketIn, PrintWriter pXSocketOut, BufferedReader pOSocketIn, PrintWriter pOSocketOut) {
+        theBoard  = new Board();
+        
+        this.pXSocketIn = pXSocketIn;
+        this.pXSocketOut = pXSocketOut;
+        this.pOSocketIn = pOSocketIn;
+        this.pOSocketOut = pOSocketOut;
+	}
+    
     /**
      * Sets the referee for the game and starts the game
      * @param r the referee for the game
@@ -70,6 +79,7 @@ public class Game implements Constants, Runnable {
     	this.pOSocketOut = pOSocketOut;
     }
     
+    /*
     public void createPlayerX() {
     	xPlayer = new Player("", LETTER_X, pXSocketIn, pXSocketOut);
     	Thread t = new Thread(xPlayer);
@@ -82,11 +92,25 @@ public class Game implements Constants, Runnable {
     	Thread t = new Thread(oPlayer);
     	
     	t.start();
-    }
+    }*/
     
     public void runGame() {
+    	
     	Referee theRef;
-    	System.out.println("Testing");
+    	Player xPlayer = null, oPlayer = null;
+    	
+    	try {
+			String pXName = pXSocketIn.readLine();
+			String pOName = pOSocketIn.readLine();
+			
+			xPlayer = new Player(pXName, LETTER_X, pXSocketIn, pXSocketOut);
+			xPlayer.setBoard(theBoard);
+			oPlayer = new Player(pOName, LETTER_O, pOSocketIn, pOSocketOut);
+			oPlayer.setBoard(theBoard);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+    	
     	theRef = new Referee();
 		theRef.setBoard(theBoard);
 		theRef.setoPlayer(oPlayer);

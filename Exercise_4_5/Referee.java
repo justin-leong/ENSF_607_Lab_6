@@ -48,9 +48,12 @@ public class Referee {
 		}
 		
 		System.out.println("\nReferee started the game...\n");
-		//board.display();
+		board.display();
 		
-		//xPlayer.play();
+		//System.out.println("Player X: " + xPlayer);
+		//System.out.println("Player O: " + oPlayer);
+		//System.out.println("Board: " + board);
+		xPlayer.play();
 	}
 	
 	/**
