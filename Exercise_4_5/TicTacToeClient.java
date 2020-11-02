@@ -12,13 +12,18 @@ public class TicTacToeClient {
 	private PrintWriter socketOut;
 	private BufferedReader stdIn;
 	
+	private Board myBoard;
+	private char myMark;
+	private char opponentMark;
+	
 	public TicTacToeClient(String serverName, int portNumber) {
 		try {
 			socket = new Socket(serverName, portNumber);
 			socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			socketOut = new PrintWriter(socket.getOutputStream(), true);
-			
 			stdIn = new BufferedReader(new InputStreamReader(System.in));
+			
+			myBoard = new Board();
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -28,15 +33,19 @@ public class TicTacToeClient {
 	
 	public void communicate() {
 		String name = "";
-		String response = "";
 
 		System.out.println("Please enter your name: ");
 		try {
 			name = stdIn.readLine();
 			socketOut.println(name);
 			System.out.println("Waiting for opponent to connect");
-			//response = socketIn.readLine();
-			//System.out.println("Response: " + response);
+			myMark = socketIn.readLine().charAt(0);
+			System.out.println("My marker: " + myMark);
+			if(myMark == 'X') {
+				opponentMark = 'O';
+			}else {
+				opponentMark = 'X';
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -51,12 +60,13 @@ public class TicTacToeClient {
 				if(gameStatus.equals("Your Turn")) {
 					System.out.println("\n" + name + " it is your turn to make a move.\n");
 					String playerMove = "Invalid";
+					String row = "";
+					String col = "";
 					
 					while(playerMove.equals("Invalid")) {
 						String rowValid = "Invalid";
 						String colValid = "Invalid";
-						String row = "";
-						String col = "";
+						
 						
 						while(rowValid.equals("Invalid")) {
 							System.out.println(name + " what row should your next mark be placed in?");
@@ -75,7 +85,8 @@ public class TicTacToeClient {
 						playerMove = socketIn.readLine();
 					}
 					
-					
+					myBoard.addMark(Integer.parseInt(row), Integer.parseInt(col), myMark);
+					myBoard.display();
 					//System.out.println("Row: " + row);
 					//System.out.println("Col: " + col);
 					
@@ -83,11 +94,13 @@ public class TicTacToeClient {
 					
 				} else if(gameStatus.equals("Opponents Turn")) {
 					System.out.println("Waiting for opponent to make move");
-					String opponentsMove = socketIn.readLine();
+					//String opponentsMove = socketIn.readLine();
+					//System.out.println("Opponent's Move: " + opponentsMove);
+					int opponentRow = socketIn.read();
+					int opponentCol = socketIn.read();
 					
-					System.out.println("Opponent's Move: " + opponentsMove);
-					//System.out.println("Row: " + opponentRow);
-					//System.out.println("Col: " + opponentCol);
+					myBoard.addMark(opponentRow, opponentCol, opponentMark);
+					myBoard.display();
 				} else {
 					break;
 				}

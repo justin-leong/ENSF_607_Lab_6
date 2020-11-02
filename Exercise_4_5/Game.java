@@ -102,6 +102,8 @@ public class Game implements Constants, Runnable {
     	try {
 			String pXName = pXSocketIn.readLine();
 			String pOName = pOSocketIn.readLine();
+			pXSocketOut.println(LETTER_X);
+			pOSocketOut.println(LETTER_O);
 			
 			xPlayer = new Player(pXName, LETTER_X, pXSocketIn, pXSocketOut);
 			xPlayer.setBoard(theBoard);

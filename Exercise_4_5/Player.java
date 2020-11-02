@@ -165,8 +165,9 @@ public class Player {
 			}else {
 				board.addMark(row, col, mark);
 				validSpace = true;
-				this.socketOut.println("Row: " + row + " Col: " + col);
-				opponent.socketOut.println("Row: " + row + " Col: " + col);
+				this.socketOut.println("Valid");
+				opponent.socketOut.write(row);
+				opponent.socketOut.write(col);
 			}
 			
 		}
