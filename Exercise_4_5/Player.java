@@ -148,7 +148,7 @@ public class Player {
 					col = -1;
 				}
 			}
-			System.out.println();
+			//System.out.println();
 			
 			// adds a marker to the space if empty
 			if(board.getMark(row, col) != ' ') {
