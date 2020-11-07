@@ -15,12 +15,12 @@ public class TicTacToeClientGUI extends JFrame implements ActionListener {
 	private Socket socket;
 	private BufferedReader socketIn;
 	private PrintWriter socketOut;
-	private BufferedReader stdIn;
 	
 	private Board myBoard;
 	private char myMark;
 	private char opponentMark;
 	private String playerName;
+	
 	private boolean myTurn = false;
 	private boolean madeMove = false;
 	private String selectedRow = "";
@@ -45,7 +45,6 @@ public class TicTacToeClientGUI extends JFrame implements ActionListener {
 			socket = new Socket(serverName, portNumber);
 			socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			socketOut = new PrintWriter(socket.getOutputStream(), true);
-			stdIn = new BufferedReader(new InputStreamReader(System.in));
 			
 			myBoard = new Board();
 		} catch (UnknownHostException e) {
@@ -54,6 +53,10 @@ public class TicTacToeClientGUI extends JFrame implements ActionListener {
 			e.printStackTrace();
 		}
 		
+		buildGUI();
+	}
+	
+	public void buildGUI() {
 		// Creating GUI elements
 		Container contentPane = getContentPane();
 		contentPane.setLayout(new FlowLayout(FlowLayout.CENTER, 30, 0));
@@ -222,8 +225,24 @@ public class TicTacToeClientGUI extends JFrame implements ActionListener {
 	
 	
 	public void communicate() {
-		displayMessage("Please enter your name to begin");
+		// prompts user to enter name in GUI application
+		setupPlayerName();
+		
+		// prompts player to make move or to wait for opponent to make move
+		playGame();
+		
+		// disconnect socket connections once game is over
+		try {
+			socketIn.close();
+			socketOut.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
+	public void setupPlayerName() {
+		displayMessage("Please enter your name to begin");
+		
 		try {
 			while(playerName == null) {
 				// wait until user enters a player name
@@ -233,9 +252,13 @@ public class TicTacToeClientGUI extends JFrame implements ActionListener {
 					e.printStackTrace();
 				}
 			}
+			
+			// sends player name info to server
 			socketOut.println(playerName);
+			
 			displayMessage("Waiting for opponent to connect");
 			
+			// get marker from server and set markers for self and opponent
 			myMark = socketIn.readLine().charAt(0);
 			playerMarkerField.setText(Character.toString(myMark));
 			if(myMark == 'X') {
@@ -246,7 +269,9 @@ public class TicTacToeClientGUI extends JFrame implements ActionListener {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+	}
+	
+	public void playGame() {
 		String gameStatus = "Your Turn";
 		
 		while(gameStatus.equals("Your Turn") || gameStatus.equals("Opponents Turn")) {
@@ -254,46 +279,11 @@ public class TicTacToeClientGUI extends JFrame implements ActionListener {
 				gameStatus = socketIn.readLine();
 				
 				if(gameStatus.equals("Your Turn")) {
-					myTurn = true;
-
-					displayMessage(playerName + " it is your turn to make a move.");
-					String playerMove = "Invalid";
-					String row = "";
-					String col = "";
-					
-					while(playerMove.equals("Invalid")) {
-						
-						while(!madeMove) {
-							// wait for player to make a move
-							try {
-								Thread.sleep(100);
-							} catch (InterruptedException e) {
-								e.printStackTrace();
-							}
-						}
-						madeMove = false;
-						
-						playerMove = socketIn.readLine();
-						if(playerMove.equals("Invalid")) {
-							displayMessage("Space already taken. Please select an empty space!");
-						}
-					}
-					
-					myBoard.addMark(Integer.parseInt(selectedRow), Integer.parseInt(selectedCol), myMark);
-					updateCell(selectedRow, selectedCol, myMark);
-					
-					
-					
+					// waits for player to make move and sends move selection to server
+					performMyTurnTasks();
 				} else if(gameStatus.equals("Opponents Turn")) {
-					myTurn = false;
-					displayMessage("Waiting for opponent to make a move");
-
-					int opponentRow = socketIn.read();
-					int opponentCol = socketIn.read();
-					
-					myBoard.addMark(opponentRow, opponentCol, opponentMark);
-					updateCell(Integer.toString(opponentRow), Integer.toString(opponentCol), opponentMark);
-					
+					// waits for opponent to make move and receives opponent move from server
+					performOpponentsTurnTasks();
 				} else {
 					break;
 				}
@@ -305,14 +295,56 @@ public class TicTacToeClientGUI extends JFrame implements ActionListener {
 		myTurn = false;
 		displayMessage("\n" + gameStatus);
 		displayMessage("GAME OVER!");
+	}
+	
+	public void performMyTurnTasks() {
+		myTurn = true;
+
+		displayMessage(playerName + " it is your turn to make a move.");
+		String playerMove = "Invalid";
 		
+		while(playerMove.equals("Invalid")) {
+			
+			while(!madeMove) {
+				// wait for player to make a move
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			madeMove = false;
+			
+			try {
+				playerMove = socketIn.readLine();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			if(playerMove.equals("Invalid")) {
+				displayMessage("Space already taken. Please select an empty space!");
+			}
+		}
+		
+		myBoard.addMark(Integer.parseInt(selectedRow), Integer.parseInt(selectedCol), myMark);
+		updateCell(selectedRow, selectedCol, myMark);
+	}
+	
+	public void performOpponentsTurnTasks() {
+		myTurn = false;
+		displayMessage("Waiting for opponent to make a move");
+
+		int opponentRow = -1;
+		int opponentCol = -1; 
 		try {
-			socketIn.close();
-			socketOut.close();
+			opponentRow = socketIn.read();
+			opponentCol = socketIn.read();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
+		myBoard.addMark(opponentRow, opponentCol, opponentMark);
+		updateCell(Integer.toString(opponentRow), Integer.toString(opponentCol), opponentMark);
 	}
 	
 	public static void main(String[] args) throws Exception {
@@ -322,8 +354,5 @@ public class TicTacToeClientGUI extends JFrame implements ActionListener {
 		} catch (Exception e){
 			System.err.println(e);
 		}
-		
-	}
-
-	
+	}	
 }
