@@ -10,6 +10,15 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+/**
+ * This class acts as a GUI client that connects to a tic-tac-toe server to play a game. This class uses swing components
+ * to display the game state to the client and has event listeners to interact with the server.
+ * 
+ * @author Justin Leong
+ * @version 1.0
+ * @since November 3, 2020
+ *
+ */
 public class TicTacToeClientGUI extends JFrame implements ActionListener {
 	
 	private Socket socket;
@@ -39,6 +48,12 @@ public class TicTacToeClientGUI extends JFrame implements ActionListener {
 	private JButton btn8;
 	private JButton btn9;
 	
+	/**
+	 * Constructs a TicTacToeClientGUI by setting up the connection to the socket via server name and port number.
+	 * Sets up the GUI for client to interact with the server.
+	 * @param serverName ip of the server or 'localhost' if client is on the same machine as server
+	 * @param portNumber port to connect to
+	 */
 	public TicTacToeClientGUI(String serverName, int portNumber) {
 		// Connect to server
 		try {
@@ -53,9 +68,13 @@ public class TicTacToeClientGUI extends JFrame implements ActionListener {
 			e.printStackTrace();
 		}
 		
+		// builds GUI that the client will interact with
 		buildGUI();
 	}
 	
+	/**
+	 * Creates and displays swing components for tic-tac-toe GUI
+	 */
 	public void buildGUI() {
 		// Creating GUI elements
 		Container contentPane = getContentPane();
@@ -153,6 +172,9 @@ public class TicTacToeClientGUI extends JFrame implements ActionListener {
 		setVisible(true);
 	}
 	
+	/**
+	 * Performs actions based on events triggered from GUI components
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(myTurn == true && playerName != null) {
@@ -182,10 +204,19 @@ public class TicTacToeClientGUI extends JFrame implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Displays message to GUI message component
+	 * @param message the message to display to the client on the GUI
+	 */
 	public void displayMessage(String message) {
 		messageWindow.append("\n" + message);
 	}
 	
+	/**
+	 * Tic-tac-toe space selected from client
+	 * @param row selected row to place marker
+	 * @param col selected column to place marker
+	 */
 	public void selectSpace(String row, String col) {
 		try {
 			socketOut.println(row);
@@ -201,6 +232,12 @@ public class TicTacToeClientGUI extends JFrame implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Updates the GUI element for the selected tic-tac-toe space with a marker
+	 * @param row the row of the tic-tac-toe grid space to place marker
+	 * @param col the column of the tic-tac-toe grid space to place marker
+	 * @param mark the marker to display on the GUI component
+	 */
 	public void updateCell(String row, String col, char mark) {
 		if(row.equals("0") && col.equals("0")) {
 			btn1.setText(Character.toString(mark));
@@ -224,6 +261,10 @@ public class TicTacToeClientGUI extends JFrame implements ActionListener {
 	}
 	
 	
+	/**
+	 * Communicates with the server to play tic-tac-toe between another client. Handles setup of game information and 
+	 * starts game play.
+	 */
 	public void communicate() {
 		// prompts user to enter name in GUI application
 		setupPlayerName();
@@ -240,6 +281,9 @@ public class TicTacToeClientGUI extends JFrame implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Prompts user to enter name and sends information to server
+	 */
 	public void setupPlayerName() {
 		displayMessage("Please enter your name to begin");
 		
@@ -271,6 +315,10 @@ public class TicTacToeClientGUI extends JFrame implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Manages the user input and server requests for the tic-tac-toe game. Displays the game state after each turn and
+	 * updates the front end of this client.
+	 */
 	public void playGame() {
 		String gameStatus = "Your Turn";
 		
@@ -297,6 +345,10 @@ public class TicTacToeClientGUI extends JFrame implements ActionListener {
 		displayMessage("GAME OVER!");
 	}
 	
+	/**
+	 * Prompts player that it is their turn to make a move and handles sending move selection to server.
+	 * Updates board after player make a valid selection.
+	 */
 	public void performMyTurnTasks() {
 		myTurn = true;
 
@@ -330,6 +382,9 @@ public class TicTacToeClientGUI extends JFrame implements ActionListener {
 		updateCell(selectedRow, selectedCol, myMark);
 	}
 	
+	/**
+	 * Waits for opponent to select move and receives move selection from server. Updates board after section is made.
+	 */
 	public void performOpponentsTurnTasks() {
 		myTurn = false;
 		displayMessage("Waiting for opponent to make a move");
@@ -347,6 +402,11 @@ public class TicTacToeClientGUI extends JFrame implements ActionListener {
 		updateCell(Integer.toString(opponentRow), Integer.toString(opponentCol), opponentMark);
 	}
 	
+	/**
+	 * main method that creates the client object and begins communication with server
+	 * @param args
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception {
 		try {
 			TicTacToeClientGUI myClient = new TicTacToeClientGUI("localhost", 7777);

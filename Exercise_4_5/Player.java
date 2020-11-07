@@ -10,7 +10,7 @@ import java.util.Scanner;
  * 
  * @author Justin Leong
  * @version 1.0
- * @since October 1, 2020
+ * @since November 3, 2020
  *
  */
 public class Player {
@@ -41,6 +41,8 @@ public class Player {
 	 * Constructs a player object setting the name of the player and the marker character they will be using
 	 * @param name the name of the player
 	 * @param mark the character that the player will be using for the game
+	 * @param socketIn the input connection from the socket
+	 * @param socketOut the output connection of the socket
 	 */
 	public Player(String name, char mark, BufferedReader socketIn, PrintWriter socketOut) {
 		setName(name);
